@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Skill at 99¢</title>
+<meta name="description" content="A sign-randomization skill test, replicated on 1.85 million Polymarket trades, flags most accounts that buy at 99¢ as skilled. A simulation shows why.">
+<meta name="theme-color" content="#E2E0DA">
+<meta property="og:title" content="Skill at 99¢">
+<meta property="og:description" content="Of 702 accounts that pay 99¢ or more, 613 are flagged skilled. None is flagged anti-skilled.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://andrea-gervasoni.github.io/skill-at-99c/">
+<meta property="og:image" content="https://andrea-gervasoni.github.io/skill-at-99c/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preload" href="assets/fonts/cormorant-garamond.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/geist-mono.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="is-loading">
+
+<div class="loader" aria-hidden="true">
+  <div class="loader__inner">
+    <p class="loader__line"><span class="num" data-loader-count>0000</span> <span class="loader__of">/ <span class="num">1,000</span> sign flips</span></p>
+    <div class="loader__axis"><span data-loader-bar></span></div>
+  </div>
+</div>
+
+<canvas class="stage" aria-hidden="true"></canvas>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="lg-defs"></defs></svg>
+<nav class="nav" data-nav aria-label="Sections">
+  <div class="nav__cap glass">
+    <a class="nav__brand" href="#top" aria-label="Skill at 99¢, back to the top"><svg class="mark" viewBox="0 0 30 20" aria-hidden="true"><rect x="0" y="14" width="3.2" height="6"/><rect x="4.4" y="8" width="3.2" height="12"/><rect x="8.8" y="3" width="3.2" height="17"/><rect x="13.2" y="10" width="3.2" height="10"/><rect x="19.4" y="0" width="1" height="20" class="mark__rule"/><rect x="24" y="15" width="5" height="5" class="mark__real"/></svg><span class="nav__name">Skill at <span class="num">99¢</span></span></a>
+    <button class="nav__now" type="button" data-nav-now aria-expanded="false" aria-controls="nav-panel">
+      <span class="nav__idx num" data-nav-idx>00</span><span class="nav__lab" data-nav-lab>Opening</span>
+      <i class="nav__bar" aria-hidden="true"><b data-nav-bar></b></i>
+      <i class="nav__chev" aria-hidden="true"></i>
+    </button>
+    <button class="nav__lang" type="button" data-lang-toggle aria-label="Language"></button>
+  </div>
+  <div class="nav__panel glass" id="nav-panel" hidden>
+    <ol class="nav__list" data-nav-list></ol>
+    <p class="nav__meta num">Polymarket · Nov–Dec 2025 · B = 1,000 · seed 20261031</p>
+    <p class="nav__langs"><button type="button" data-lang="en">English</button><button type="button" data-lang="it">Italiano</button></p>
+  </div>
+</nav>
+
+<main id="top">
+  <section class="hero" aria-labelledby="hero-title">
+    <h1 id="hero-title" class="sr-only">Risk 99¢ to make 1¢. The test calls it skill.</h1>
+    <div class="hero__stick">
+      <div class="hero__stage" data-hero aria-hidden="true"></div>
+      <span class="hero__cue" aria-hidden="true"><i></i></span>
+    </div>
+  </section>
+
+  <section class="sig" id="signature" aria-labelledby="sig-title">
+    <div class="sig__pin">
+      <div class="sig__copy grid">
+        <div class="sig__head">
+          <h2 id="sig-title" class="sig__title">Twenty bets, replayed <span class="num">1,000</span> times with their signs flipped.</h2>
+
+          <div class="states" role="radiogroup" aria-label="Simulated trader">
+            <button class="state" role="radio" aria-checked="true" data-state="fav99">
+              <span class="state__mark" aria-hidden="true"></span>
+              <span class="state__label"><span class="num">99¢</span>, no loss</span>
+              <span class="state__val num" data-wl="fav99"></span>
+            </button>
+            <button class="state" role="radio" aria-checked="false" data-state="fav99loss">
+              <span class="state__mark" aria-hidden="true"></span>
+              <span class="state__label"><span class="num">99¢</span>, one loss</span>
+              <span class="state__val num" data-wl="fav99loss"></span>
+            </button>
+            <button class="state" role="radio" aria-checked="false" data-state="fair50">
+              <span class="state__mark" aria-hidden="true"></span>
+              <span class="state__label"><span class="num">50¢</span>, fair coin</span>
+              <span class="state__val num" data-wl="fair50"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="sig__chart" data-chart aria-hidden="true"></div>
+
+        <div class="sig__foot">
+          <dl class="readout num" aria-live="polite">
+            <div><dt>Real record</dt><dd data-out="obs"></dd></div>
+            <div><dt>95th pct of the null</dt><dd data-out="p95"></dd></div>
+            <div><dt>Histories above · tied</dt><dd data-out="at"></dd></div>
+            <div><dt data-out="formula"></dt><dd data-out="p"></dd></div>
+            <div class="readout__verdict"><dt>Verdict</dt><dd><i class="vmark" data-out="mark"></i><span data-out="verdict"></span></dd></div>
+          </dl>
+
+          <p class="cap">Each bill is one history: the same <span class="num">20</span> profits, every sign flipped at random. Piles count histories by total profit. The test calls a trader skilled when fewer than <span class="num">5%</span> of histories beat the real record. <span data-hint>Hover a pile to read it.</span></p>
+          <p class="note num">Simulation, not market data · unit stake · seed 20261031 + round(q×1000), computed in your browser.</p>
+        </div>
+      </div>
+
+      <div class="labels" aria-hidden="true">
+        <span class="lab lab--real num" data-lab="real"><i></i><b>Real record</b> <em data-lab-val="real"></em></span>
+        <span class="lab lab--p95 num" data-lab="p95">95th pct</span>
+        <span class="lab lab--tick num" data-lab="t0"></span>
+        <span class="lab lab--tick num" data-lab="t1"></span>
+        <span class="lab lab--tick num" data-lab="t2"></span>
+        <span class="lab lab--tick num" data-lab="t3"></span>
+        <span class="lab lab--tick num" data-lab="t4"></span>
+        <span class="lab lab--axis num" data-lab="axis">Total profit of each history, $</span>
+        <span class="lab lab--yaxis num" data-lab="yaxis">Histories</span>
+        <div class="xh" data-xh><i class="xh__line"></i><span class="xh__tip num" data-xh-tip></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec sec--method" id="method" aria-labelledby="method-title">
+    <div class="grid">
+      <h2 id="method-title" class="sec__title">The route: read the paper, prove the test on traders whose answer is known, then cut <span class="num">1.27</span> billion fills down to <span class="num">5,000</span> accounts.</h2>
+      <ol class="steps">
+        <li class="step step--split">
+          <div class="step__text">
+          <p class="step__k num">01 · Read</p>
+          <p class="step__t">The test comes from Gómez-Cram, Guo, Jensen and Kung (<span class="num">25 June 2026</span>): give each event's profit a random sign, <span class="num">1,000</span> times, and count how often chance beats the real record.</p>
+          <figure class="fig fig--term step__fig">
+            <div class="fig__bar num"><span class="fig__name">spec · sign-randomization skill test</span><span class="fig__read">as implemented</span></div>
+            <pre class="spec num"><span class="spec__l">T    = Σ<sub>e</sub> Π<sub>e</sub></span><span class="spec__c">observed profit, summed by event</span>
+<span class="spec__l">T<sub>b</sub>   = Σ<sub>e</sub> R<sub>be</sub> Π<sub>e</sub>,  R<sub>be</sub> = ±1</span><span class="spec__c">one random sign per account and event, b = 1 … 1,000</span>
+<span class="spec__l">p    = (#{T<sub>b</sub> &gt; T} + ½ #{T<sub>b</sub> = T}) / 1,000</span><span class="spec__c">the paper's mid-p</span>
+<span class="spec__l">skilled p &lt; 0.05 · anti p &gt; 0.95</span><span class="spec__c">at least 10 events; BH at q = 0.05, one tail at a time</span>
+<span class="spec__l">market makers out</span><span class="spec__c">≥ 100 markets, ≥ 70% limit-order volume, both sides in ≥ 70% of markets (Appendix B.3, p. 54)</span></pre>
+          </figure>
+          </div>
+          <div class="coin" data-coin aria-label="A coin with +1 on one face and −1 on the other: the random sign the test gives each event's profit.">
+            <p class="coin__read"><span class="num" data-coin-read>+1</span><span class="coin__cap">the sign this event's profit gets, flipped at random</span></p>
+          </div>
+        </li>
+        <li class="step">
+          <p class="step__k num">02 · Check</p>
+          <p class="step__t">On synthetic traders with a known answer, pure noise is flagged <span class="num">5.95%</span> of the time, a real <span class="num">10</span>-point edge needs about <span class="num">160</span> trades to be found, and favourite buyers with no edge are flagged <span class="num">59.25%</span>.</p>
+          <figure class="fig fig--term step__fig" data-fig="power">
+            <div class="fig__big"><span class="fig__num num">59.25%</span><span class="fig__lab">of favourite buyers with no edge are flagged skilled, in synthetic data</span></div>
+            <div class="fig__bar num"><span class="fig__name">Synthetic: share flagged skilled, by trades per account</span><span class="fig__read" data-read></span></div>
+            <div class="fig__plot" data-plot></div>
+            <figcaption class="fig__note num">Synthetic data, fluke_test package. Planted edge: 400 accounts per point that always buy at 5–85¢ and win 10 points more often than the price implies. Pure noise: 2,000 accounts of 20 trades, random direction (KS p = 0.273; 0 survive BH). Favourite buyers: 400 accounts, 10 buys at 90–99¢, no edge; all 237 flagged survive BH. B = 1,000.</figcaption>
+          </figure>
+        </li>
+        <li class="step">
+          <p class="step__k num">03 · Data</p>
+          <p class="step__t">A frozen release of <span class="num">1,266,885,846</span> fills, read in place with DuckDB, becomes <span class="num">5,000</span> accounts and <span class="num">1,848,270</span> trades for Nov–Dec <span class="num">2025</span>.</p>
+          <figure class="fig fig--term step__fig" data-fig="funnel">
+            <div class="fig__big"><span class="fig__num num">5,000</span><span class="fig__lab">accounts sampled from 82,568 eligible ones</span></div>
+            <div class="fig__bar num"><span class="fig__name">Accounts kept at each step, log scale</span><span class="fig__read" data-read></span></div>
+            <div class="fig__plot" data-plot></div>
+            <figcaption class="fig__note num">SII-WANGZJ/Polymarket_data, commit 73bc1adc (release of 5 Oct 2026). Maker and taker sides unpivoted; prices and directions in YES terms; outcome from final prices ≥ 0.99 or ≤ 0.01. Self-trades dropped. Sample drawn in MD5 order with a fixed salt. 3 rows without an event excluded.</figcaption>
+          </figure>
+        </li>
+        <li class="step">
+          <p class="step__k num">04 · Test</p>
+          <p class="step__t">On real accounts the p-values do not lie flat: <span class="num">1,430</span> fall below <span class="num">0.05</span>, and <span class="num">737</span> of them belong to the <span class="num">879</span> accounts that pay <span class="num">95¢</span> or more on average.</p>
+          <figure class="fig fig--term step__fig" data-scatter>
+            <div class="fig__big"><span class="fig__num num">1,430</span><span class="fig__lab">accounts fall below p = 0.05; a fair test would give about 250</span></div>
+            <div class="fig__bar num"><span class="fig__name">Each account: mean buy price against raw p-value</span><span class="fig__read" data-read></span></div>
+            <div class="sc" data-sc-plot></div>
+            <figcaption class="fig__note num">Polymarket, Nov–Dec 2025: 4,850 tested accounts with at least one buy (150 without buys are only in the histogram). Mid-p, B = 1,000. Price axis stretched 4.5 times above 0.90. Points jittered in p so ties stay visible: by up to 0.004, and inside the p &lt; 0.05 band for skilled accounts. Right: p-values of all 5,000 accounts in bins of 0.05; the dashed line is the 250 per bin a fair test would give.</figcaption>
+          </figure>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec sec--find sec--band" id="finding" aria-labelledby="find-title">
+    <div class="grid">
+      <h2 id="find-title" class="sec__title">Of <span class="num" data-count="702">702</span> accounts that pay <span class="num">99¢</span> or more, <span class="num" data-count="613">613</span> are flagged skilled. None is flagged anti-skilled.</h2>
+      <div class="opts" role="radiogroup" aria-label="Sample window" data-opts="window">
+        <button class="opt" role="radio" aria-checked="true" data-value="novdec2025"><i></i>Nov–Dec <span class="num">2025</span></button>
+        <button class="opt" role="radio" aria-checked="false" data-value="dec2025"><i></i>Dec <span class="num">2025</span> only</button>
+      </div>
+      <figure class="fig fig--term tile--dark" data-fig3d="bundles">
+            <div class="fig__big"><span class="fig__num num">87.3%</span><span class="fig__lab">of accounts that pay 99¢ or more are flagged skilled</span></div>
+        <div class="fig__bar num"><span class="fig__name">Accounts flagged, by average buy price</span><span class="fig__read" data-read></span></div>
+        <div class="mini" data-mini></div>
+        <figcaption class="fig__note num">Each bundle is 100 sheets = 100% of the accounts in its price bucket; ± is the half-width of the 95% Wilson interval. Green edges: flagged skilled. Dark edges: flagged anti-skilled. Bracket: share a zero-edge trader is flagged skilled in simulation, 10–40 events, at the bucket's edge prices. Raw p &lt; 0.05. Source: Polymarket trades (SII-WANGZJ/Polymarket_data), 5,000 sampled accounts per window (all with ≥10 events), those with at least one buy, B = 1,000. December overlaps Nov–Dec.</figcaption>
+      </figure>
+      <figure class="fig fig--fallback" data-fig="buckets" hidden>
+        <div class="fig__plot" data-plot></div>
+        <figcaption class="fig__note num">Share of accounts flagged at raw p &lt; 0.05, by average buy price. Band: share a zero-edge trader is flagged skilled in simulation, 10–40 events, at the bucket's edge prices. Source: Polymarket trades (SII-WANGZJ/Polymarket_data), 5,000 accounts per window, ≥10 events, B = 1,000. December overlaps Nov–Dec.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="sec sec--why sec--left" id="why" aria-labelledby="why-title">
+    <div class="grid">
+      <h2 id="why-title" class="sec__title">Flipping signs builds a null that is symmetric around zero. A <span class="num">99¢</span> contract pays <span class="num">+1¢</span> almost every time and <span class="num">−99¢</span> about once in a hundred.</h2>
+      <p class="sec__dek">Over <span class="num">20</span> events the most likely history has no loss (<span class="num">81.8%</span> of the time), and that is the most extreme history the null can produce.</p>
+      <figure class="fig fig--term" data-fig3d="field">
+            <div class="fig__big"><span class="fig__num num">82.7%</span><span class="fig__lab">of zero-edge traders are called skilled at 99¢ and 20 events, in simulation</span></div>
+        <div class="fig__bar num"><span class="fig__name">Simulation: zero-edge traders called skilled, by price and events</span><span class="fig__read" data-read></span></div>
+        <div class="mini mini--field" data-mini></div>
+        <figcaption class="fig__note num">Simulation. Each pile is one price and one number of events (front row 40, middle 20, back 10); one sheet = 1% of 4,000 zero-edge traders called skilled. Green plane at 5%: what a fair test should flag. One fair price, unit stake, B = 1,000, mid-p, seed 20261031. Price steps are uneven.</figcaption>
+      </figure>
+      <figure class="fig fig--fallback" data-fig="curves" hidden>
+        <div class="fig__plot" data-plot></div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="sec sec--cap" id="sensitivity" aria-labelledby="cap-title">
+    <div class="grid">
+      <h2 id="cap-title" class="sec__title">With no cap, <span class="num">26.9%</span> are skilled and <span class="num">11.1%</span> anti-skilled, the reverse of the paper's Table&nbsp;<span class="num">1</span>. At an <span class="num">80¢</span> cap the two come close: <span class="num">11.4%</span> and <span class="num">14.1%</span>.</h2>
+      <div class="opts-row">
+        <div class="opts" role="radiogroup" aria-label="Correction" data-opts="corr">
+          <button class="opt" role="radio" aria-checked="true" data-value="raw"><i></i>Raw p</button>
+          <button class="opt" role="radio" aria-checked="false" data-value="bh"><i></i>Benjamini–Hochberg</button>
+        </div>
+        <div class="opts" role="radiogroup" aria-label="Sample window" data-opts="window">
+          <button class="opt" role="radio" aria-checked="true" data-value="novdec2025"><i></i>Nov–Dec <span class="num">2025</span></button>
+          <button class="opt" role="radio" aria-checked="false" data-value="dec2025"><i></i>Dec <span class="num">2025</span> only</button>
+        </div>
+      </div>
+      <figure class="fig fig--term" data-fig="caps">
+            <div class="fig__big"><span class="fig__num num">26.89%</span><span class="fig__lab">skilled with no price cap, against 8.63% in the paper</span></div>
+        <div class="fig__bar num"><span class="fig__name">Skilled and anti-skilled share, by price cap</span><span class="fig__read" data-read></span></div>
+        <div class="fig__plot" data-plot></div>
+        <figcaption class="fig__note num">Accounts with at least one buy, kept when their average buy price is under the cap. Dashed lines: Gómez-Cram, Guo, Jensen and Kung (2026), Table 1, accounts with ≥10 events. BH at q = 0.05, recomputed within each cohort. Whiskers: 95% Wilson intervals from each cohort's size.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="sec sec--table sec--left" id="table1" aria-labelledby="table-title">
+    <div class="grid">
+      <h2 id="table-title" class="sec__title">Same test, same thresholds. Where the price cap sits decides which side is larger.</h2>
+      <div class="tbl-wrap">
+        <table class="tbl num" data-table>
+          <thead>
+            <tr><th scope="col">Sample</th><th scope="col">Accounts</th><th scope="col">Skilled, raw</th><th scope="col">Anti, raw</th><th scope="col">Skilled, BH</th><th scope="col">Anti, BH</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="fig__note num tbl-note">Percent of accounts tested. Paper: Table&nbsp;1, accounts with ≥10 events; account count not reported here. Replication: the 5,000 sampled accounts (all with ≥10 events) that made at least one buy. Filled square: skilled above anti-skilled.</p>
+    </div>
+  </section>
+
+  <section class="sec sec--results" id="results" aria-labelledby="results-title">
+    <div class="grid">
+      <h2 id="results-title" class="sec__title">Compared four ways, the flags follow the price paid more than the trader who paid it.</h2>
+      <ol class="steps">
+        <li class="step tile--dark">
+          <p class="step__k num">A · Against the paper</p>
+          <p class="step__t">With no cap the replication flags <span class="num">3.12</span> times the paper's skilled share and <span class="num">0.66</span> times its anti-skilled share; under an <span class="num">80¢</span> cap the order flips back to the paper's, with <span class="num">0.81</span> skilled per anti-skilled account against the paper's <span class="num">0.51</span>.</p>
+          <figure class="fig fig--term step__fig" data-fig3d="compare">
+            <div class="fig__big"><span class="fig__num num">3.12×</span><span class="fig__lab">the paper's skilled share, with no cap</span></div>
+            <div class="fig__bar num"><span class="fig__name">Paper against replication: 100 accounts per bundle</span><span class="fig__read" data-read></span></div>
+            <div class="mini mini--compare" data-mini></div>
+            <figcaption class="fig__note num">Each bundle stands for 100 accounts: green sheets from the bottom are the share flagged skilled, grey sheets from the top the share flagged anti-skilled, raw p &lt; 0.05. Paper: Gómez-Cram, Guo, Jensen and Kung (2026), Table 1, accounts with ≥10 events. Replication: Polymarket, accounts with at least one buy; ± is the half-width of the 95% Wilson interval.</figcaption>
+          </figure>
+        </li>
+        <li class="step">
+          <p class="step__k num">B · Against a trader with no edge</p>
+          <p class="step__t">In five of six price buckets, in both windows, the share flagged skilled sits inside the range a simulated trader with no edge would get; only <span class="num">80–90¢</span> is above it, at <span class="num">42.2%</span> against at most <span class="num">35.2%</span>.</p>
+          <figure class="fig fig--term step__fig" data-fig="band">
+            <div class="fig__big"><span class="fig__num num">5 of 6</span><span class="fig__lab">price buckets sit inside the zero-edge range</span></div>
+            <div class="fig__bar num"><span class="fig__name">Observed skilled share against the zero-edge range, by price bucket</span><span class="fig__read" data-read></span></div>
+            <div class="fig__plot" data-plot></div>
+            <figcaption class="fig__note num">Grey range: share of zero-edge traders flagged skilled in simulation, 10 to 40 events, at the bucket's edge prices (one fair price, unit stake, B = 1,000, seed 20261031). Squares: observed share, raw p &lt; 0.05, filled for Nov–Dec 2025, hollow for Dec 2025, with 95% Wilson whiskers.</figcaption>
+          </figure>
+        </li>
+        <li class="step">
+          <p class="step__k num">C · Against the correction</p>
+          <p class="step__t">Benjamini–Hochberg removes <span class="num">53.1%</span> of the anti-skilled flags but only <span class="num">10.3%</span> of the skilled ones; under an <span class="num">80¢</span> cap it removes <span class="num">37.8%</span> and <span class="num">52.3%</span>. It corrects for many tests, not for a null that ignores the price.</p>
+          <figure class="fig fig--term step__fig" data-fig="bh">
+            <div class="fig__big"><span class="fig__num num">−10.3%</span><span class="fig__lab">skilled flags removed by Benjamini–Hochberg, against −53.1% anti-skilled</span></div>
+            <div class="fig__bar num"><span class="fig__name">Raw p against Benjamini–Hochberg, Nov–Dec 2025</span><span class="fig__read" data-read></span></div>
+            <div class="fig__plot" data-plot></div>
+            <figcaption class="fig__note num">Share of accounts flagged, raw p &lt; 0.05 (hollow) and after BH at q = 0.05 (filled), recomputed within each cohort. The synthetic favourite buyers in the method behave the same way: all 237 flagged survive BH.</figcaption>
+          </figure>
+        </li>
+        <li class="step">
+          <p class="step__k num">D · Where the flags come from</p>
+          <p class="step__t">The <span class="num">14.5%</span> of buyers who pay <span class="num">99¢</span> or more on average produce <span class="num">47%</span> of all skilled flags in Nov–Dec; in December alone, <span class="num">19.7%</span> produce <span class="num">53.4%</span>.</p>
+          <figure class="fig fig--term step__fig" data-fig="conc">
+            <div class="fig__big"><span class="fig__num num">47%</span><span class="fig__lab">of skilled flags come from 14.5% of buyers</span></div>
+            <div class="fig__bar num"><span class="fig__name">Share of accounts against share of skilled flags</span><span class="fig__read" data-read></span></div>
+            <div class="fig__plot" data-plot></div>
+            <figcaption class="fig__note num">Accounts with at least one buy, raw p &lt; 0.05. Nov–Dec 2025: 613 of 1,304 skilled accounts with buys pay ≥ 99¢ on average; they are 702 of 4,850 accounts. Dec 2025: 964 of 4,900 accounts.</figcaption>
+          </figure>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec sec--verdict sec--band" id="verdict" aria-labelledby="verdict-title">
+    <div class="grid">
+      <p class="verdict__k num">Verdict</p>
+      <h2 id="verdict-title" class="sec__title verdict__title">On these trades the sign-flip test measures the price of the contract before it measures the skill of the trader.</h2>
+      <ol class="verdict tile--dark">
+        <li><span class="verdict__n num">87.3%</span><p>of accounts that pay <span class="num">99¢</span> or more are flagged skilled, close to the <span class="num">82.7%</span> a trader with no edge gets in simulation at <span class="num">99¢</span> and <span class="num">20</span> events.</p></li>
+        <li><span class="verdict__n num">5 / 6</span><p>price buckets, in both windows, sit inside the zero-edge range: the flags are what the null produces when payoffs are this skewed.</p></li>
+        <li><span class="verdict__n num">47%</span><p>of all skilled flags come from <span class="num">14.5%</span> of buyers, the favourite buyers; correcting with BH barely touches them.</p></li>
+        <li><span class="verdict__n num">0.81</span><p>skilled per anti-skilled account under an <span class="num">80¢</span> cap, against <span class="num">2.43</span> with no cap and <span class="num">0.51</span> in the paper: where the price mix is closer to fair, the replication moves toward the paper.</p></li>
+      </ol>
+      <p class="verdict__so">So a count of "skilled" accounts on Polymarket depends on how many favourites they buy. It does not show that the paper is wrong; it shows that its Table 1 needs the price mix next to it, and that a fair-price null is the test to run next.</p>
+    </div>
+  </section>
+
+  <section class="sec sec--claims" id="claims" aria-labelledby="claims-title">
+    <div class="grid">
+      <h2 id="claims-title" class="sec__title">What this shows, what it does not, and where it is thin.</h2>
+      <div class="claims" data-claims></div>
+    </div>
+  </section>
+
+  <section class="sec sec--next sec--left" id="next" aria-labelledby="next-title">
+    <div class="grid">
+      <h2 id="next-title" class="sec__title">Next: replace sign flipping with a fair-price null. Skill that survives above <span class="num">90¢</span> is real; what disappears was skew.</h2>
+      <p class="sec__dek">Redraw every event's outcome as a coin that lands with the probability of the price paid, and recompute profit <span class="num">1,000</span> times.</p>
+      <div class="repro">
+        <p class="repro__label num">Reproduce</p>
+        <pre class="repro__code num"><code data-type>python run_full.py --start-epoch 1761955200 --out trade_table_novdec2025.parquet &amp;&amp; python analyze_results.py trade_table_novdec2025.parquet</code><span class="t-caret" aria-hidden="true"></span></pre>
+        <button class="repro__copy num" type="button" data-copy>Copy</button>
+      </div>
+      <p class="fig__note num">Data: SII-WANGZJ/Polymarket_data (Hugging Face), commit 73bc1adc · 87 pytest tests · 11/11 mutations caught.</p>
+      <ul class="links" data-links></ul>
+    </div>
+  </section>
+  <section class="sec sec--close" id="close" aria-labelledby="close-title">
+    <div class="grid">
+      <div class="close__text">
+        <h2 id="close-title" class="sec__title close__title">Pay <span class="num">99¢</span>. Collect <span class="num">$1</span>. Get called skilled.</h2>
+        <p class="fig__note num">613 of 702 accounts that pay 99¢ or more are flagged skilled, 0 anti-skilled. Polymarket, Nov–Dec 2025, raw p &lt; 0.05.</p>
+      </div>
+      <div class="mini mini--close" data-mini-close aria-hidden="true"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot grid">
+  <p class="foot__name"><svg class="mark" viewBox="0 0 30 20" aria-hidden="true"><rect x="0" y="14" width="3.2" height="6"/><rect x="4.4" y="8" width="3.2" height="12"/><rect x="8.8" y="3" width="3.2" height="17"/><rect x="13.2" y="10" width="3.2" height="10"/><rect x="19.4" y="0" width="1" height="20" class="mark__rule"/><rect x="24" y="15" width="5" height="5" class="mark__real"/></svg>Skill at <span class="num">99¢</span></p>
+  <div class="foot__col">
+    <p>Research and site by Andrea Gervasoni for TKS Build, <span class="num">November 2026</span>.</p>
+    <p>Not investment advice. The simulation is a model, not market data.</p>
+  </div>
+  <div class="foot__col foot__legal num">
+    <p>$1 note: scan of the obverse, public domain (work of the United States Government), Wikimedia Commons. Shown on one side only and at a size different from a real note, for education (31 CFR 411.1). Not legal tender.</p>
+    <p>Type: Cormorant Garamond and Geist Mono, SIL Open Font License. Code: three.js (MIT), Lenis (MIT), GSAP (standard license).</p>
+  </div>
+  <p class="foot__langs"><button type="button" data-lang="en">English</button> · <button type="button" data-lang="it">Italiano</button></p>
+  <a class="foot__top num" href="#top">Back to top ↑</a>
+</footer>
+
+<script src="js/vendor/gsap.min.js"></script>
+<script src="js/vendor/ScrollTrigger.min.js"></script>
+<script src="js/vendor/lenis.min.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
