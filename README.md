@@ -5,7 +5,7 @@
 An interactive research site for my TKS Build. I rebuilt the sign-randomization skill test from Gómez-Cram, Guo, Jensen and Kung (2026) and ran it on 1,848,270 real Polymarket trades. My results came out reversed from the paper's, and this site shows why.
 
 **Live site:** https://andrea-gervasoni.github.io/skill-at-99c/
-**Article:** [Medium link]
+**Article:** [[Medium link]](https://medium.com/@gervandre09/i-rebuilt-a-skill-test-on-1-8-million-polymarket-trades-it-called-a-7-cent-profit-skill-1e2cf6bf2562)
 **Research code:** [GitHub link]
 
 ![Skill at 99¢](assets/og.png)
