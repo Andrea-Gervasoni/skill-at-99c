@@ -31,7 +31,7 @@ const LINKS = [
 const CLAIMS = [
   { group: 'Supported', items: [
     ['Price drives the signal.', 'The skilled share rises from 11.4% below 80¢ to 87.3% at 99¢ or more, while the anti-skilled share falls to zero.'],
-    ['The mechanism holds in simulation.', 'A trader with no edge who pays 99¢ over 20 events is flagged skilled 82.7% of the time.'],
+    ['The mechanism holds in simulation.', 'A trader with no skill who pays 99¢ over 20 events is flagged skilled 82.7% of the time.'],
     ['Table 1 does not replicate.', 'Without a price cap, these data give more skilled than anti-skilled accounts, the opposite of the paper.']
   ] },
   { group: 'Not supported', items: [
@@ -129,7 +129,7 @@ function polyline(pts, e) {
   return out.map(p => p.map(v => v.toFixed(1)).join(',')).join(' ');
 }
 
-// ---------- 3. skilled share by price bucket, with the zero-edge band ----------
+// ---------- 3. skilled share by price bucket, with the no-skill band ----------
 function bucketsChart(data) {
   return ({ w, h, q, opts, small }) => {
     const win = opts.window || 'novdec2025';
@@ -155,16 +155,16 @@ function bucketsChart(data) {
       if (showVal) svg += `<text class="v v--skill" x="${cx + bw / 2 + 6}" y="${F.y(r.sp * e) + (r.sp < r.ap ? 16 : 4)}" opacity="${e}">${pct(r.sp)}</text>`;
       svg += `<text class="xl" x="${cx}" y="${h - F.m.b + 20}" text-anchor="middle">${small ? labels[i].replace('¢', '') : labels[i]}</text>`;
       svg += `<text class="xn" x="${cx}" y="${h - F.m.b + 38}" text-anchor="middle">${small ? '' : 'n '}${fmtInt(r.n)}</text>`;
-      cats.push({ x: cx, tip: `${labels[i]} · n ${fmtInt(r.n)} · skilled ${fmtInt(r.s)} (${pct(r.sp)}) · anti ${fmtInt(r.a)} (${pct(r.ap)}) · zero-edge ${lo}–${hi}%` });
+      cats.push({ x: cx, tip: `${labels[i]} · n ${fmtInt(r.n)} · skilled ${fmtInt(r.s)} (${pct(r.sp)}) · anti ${fmtInt(r.a)} (${pct(r.ap)}) · no skill ${lo}–${hi}%` });
     });
     const lx = F.m.l;
     if (small) svg += `<text class="xn" x="${F.m.l - 8}" y="${h - F.m.b + 20}" text-anchor="end">¢</text><text class="xn" x="${F.m.l - 8}" y="${h - F.m.b + 38}" text-anchor="end">n</text>`;
-    svg += `<g class="legend" transform="translate(${lx},14)">${sq(5, 0, 9, 'm-skill')}<text x="16" y="4">skilled</text>${sq(86, 0, 9, 'm-anti')}<text x="97" y="4">anti-skilled</text><rect class="band" x="${small ? 0 : 195}" y="${small ? 10 : -6}" width="10" height="12"/><text x="${small ? 16 : 211}" y="${small ? 20 : 4}">zero-edge simulation</text></g>`;
-    return { svg, cats, label: 'Share of accounts flagged skilled and anti-skilled by price bucket, with the simulated zero-edge range.' };
+    svg += `<g class="legend" transform="translate(${lx},14)">${sq(5, 0, 9, 'm-skill')}<text x="16" y="4">skilled</text>${sq(86, 0, 9, 'm-anti')}<text x="97" y="4">anti-skilled</text><rect class="band" x="${small ? 0 : 195}" y="${small ? 10 : -6}" width="10" height="12"/><text x="${small ? 16 : 211}" y="${small ? 20 : 4}">no-skill simulation</text></g>`;
+    return { svg, cats, label: 'Share of accounts flagged skilled and anti-skilled by price bucket, with the simulated no-skill range.' };
   };
 }
 
-// ---------- 4. how often a zero-edge trader is called skilled, by price ----------
+// ---------- 4. how often a trader with no skill is called skilled, by price ----------
 function curvesChart(data) {
   return ({ w, h, q, small }) => {
     const sim = data.simulation;
@@ -200,7 +200,7 @@ function curvesChart(data) {
     });
     svg += `<text class="xn" x="${F.m.l}" y="${h - F.m.b + 42}">Price paid${small ? ', ¢' : ''}</text>`;
     svg += `<g class="legend" transform="translate(${F.m.l},14)"><line class="c-20" x1="0" x2="22" y1="0" y2="0"/><text x="28" y="4">20 events</text><line class="c-10" x1="104" x2="126" y1="0" y2="0"/><text x="132" y="4">10</text><line class="c-40" x1="160" x2="182" y1="0" y2="0"/><text x="188" y="4">40</text></g>`;
-    return { svg, cats, label: 'Simulated share of zero-edge traders flagged skilled, by price paid, for 10, 20 and 40 events.' };
+    return { svg, cats, label: 'Simulated share of traders with no skill flagged skilled, by price paid, for 10, 20 and 40 events.' };
   };
 }
 
@@ -277,7 +277,7 @@ function powerChart(data) {
       if (!small || i === 1 || i === 5) svg += `<text class="v halo" x="${F.x(i) + (i ? -8 : 8)}" y="${F.y(P.detected_pct[i]) + (i === 0 && compact ? 20 : -10)}" text-anchor="${i ? 'end' : 'start'}" opacity="${k}">${pct(P.detected_pct[i], 2)}</text>`;
       svg += `<text class="xl" x="${F.x(i)}" y="${h - F.m.b + 20}" text-anchor="middle">${t}</text>`;
       let tip = `${t} trades · real 10-point edge found ${pct(P.detected_pct[i], 2)}`;
-      if (i === 0) tip += ` · favourite buyers, no edge: ${pct(S.favorite_buyers.raw_pct, 2)} flagged`;
+      if (i === 0) tip += ` · favourite buyers, no skill: ${pct(S.favorite_buyers.raw_pct, 2)} flagged`;
       if (i === 1) tip += ` · pure noise: ${pct(S.noise.raw_pct, 2)} flagged`;
       cats.push({ x: F.x(i), tip });
     });
@@ -289,10 +289,10 @@ function powerChart(data) {
     svg += sq(F.x(0), F.y(S.favorite_buyers.raw_pct), 10 * ke, 'm-skill');
     svg += w < 1000
       ? `<text class="v v--skill halo" x="${F.m.l + 4}" y="${F.y(S.favorite_buyers.raw_pct) - 12}" opacity="${ke}">favourite buyers ${pct(S.favorite_buyers.raw_pct, 2)}</text>`
-      : `<text class="v v--skill" x="${F.x(0) + 12}" y="${F.y(S.favorite_buyers.raw_pct) + 4}" opacity="${ke}">favourite buyers, no edge ${pct(S.favorite_buyers.raw_pct, 2)}</text>`;
+      : `<text class="v v--skill" x="${F.x(0) + 12}" y="${F.y(S.favorite_buyers.raw_pct) + 4}" opacity="${ke}">favourite buyers, no skill ${pct(S.favorite_buyers.raw_pct, 2)}</text>`;
     svg += `<text class="xn" x="${F.m.l}" y="${h - F.m.b + 42}">Trades per account, doubling</text>`;
     const idle = `160 trades · ${pct(P.detected_pct[4], 2)} of real edges found · favourite buyers ${pct(S.favorite_buyers.raw_pct, 2)}`;
-    return { svg, cats, idle, label: 'Synthetic check: share of accounts flagged skilled by trades per account, for a real edge, pure noise and favourite buyers with no edge.' };
+    return { svg, cats, idle, label: 'Synthetic check: share of accounts flagged skilled by trades per account, for a real edge, pure noise and favourite buyers with no skill.' };
   };
 }
 
@@ -430,7 +430,7 @@ function scatterFig(fig, data, pts, { phone }) {
   return { set q(v) { st.q = v; draw(); } };
 }
 
-// ---------- results B: observed share against the zero-edge range ----------
+// ---------- results B: observed share against the no-skill range ----------
 function bandChart(data) {
   return ({ w, h, q, small }) => {
     const B = data.simulation.zero_edge_band_by_bucket_pct, labels = data.price_buckets_raw_only.buckets.map(cents);
@@ -456,14 +456,14 @@ function bandChart(data) {
       if (out) svg += `<text class="v v--skill halo" x="${cx + 18}" y="${F.y(R1[i].sp) - 10}" opacity="${m}">${small || lang === 'it' ? 'above' : 'above the range'}</text>`;
       svg += `<text class="xl" x="${cx}" y="${h - F.m.b + 20}" text-anchor="middle">${small ? labels[i].replace('¢', '') : labels[i]}</text>`;
       if (!small) svg += `<text class="xn" x="${cx}" y="${h - F.m.b + 38}" text-anchor="middle">${out ? 'outside' : 'inside'}</text>`;
-      cats.push({ x: cx, tip: `${labels[i]} · zero-edge ${lo}–${hi}% · Nov–Dec ${pct(R1[i].sp)} (n ${fmtInt(R1[i].n)}) · Dec ${pct(R2[i].sp)} (n ${fmtInt(R2[i].n)}) · ${out ? 'above' : 'inside'}` });
+      cats.push({ x: cx, tip: `${labels[i]} · no skill ${lo}–${hi}% · Nov–Dec ${pct(R1[i].sp)} (n ${fmtInt(R1[i].n)}) · Dec ${pct(R2[i].sp)} (n ${fmtInt(R2[i].n)}) · ${out ? 'above' : 'inside'}` });
     });
     // the legend is laid out from the length of its words, so it holds in either language
-    const cw = 7.4, l1 = tr(small ? 'zero-edge' : 'zero-edge range'), l2 = tr('Nov–Dec'), l3 = tr('Dec');
+    const cw = 7.4, l1 = tr(small ? 'no skill' : 'no-skill range'), l2 = tr('Nov–Dec'), l3 = tr('Dec');
     const x2 = 18 + l1.length * cw + 20, x3 = x2 + 10 + l2.length * cw + 20;
     svg += `<g class="legend" transform="translate(${F.m.l},14)"><rect class="band" x="0" y="-7" width="12" height="13"/><text x="18" y="4">${l1}</text>${sq(x2, 0, 9, 'm-skill')}<text x="${x2 + 10}" y="4">${l2}</text>${sq(x3, 0, 9, 'm-hollow')}<text x="${x3 + 10}" y="4">${l3}</text></g>`;
     const inside = data.analysis.inside_zero_edge_band.novdec2025.filter(Boolean).length;
-    return { svg, cats, idle: `${inside} of ${B.length} buckets inside the zero-edge range, in both windows · above: 80–90¢`, label: 'Observed skilled share by price bucket against the simulated zero-edge range.' };
+    return { svg, cats, idle: `${inside} of ${B.length} buckets inside the no-skill range, in both windows · above: 80–90¢`, label: 'Observed skilled share by price bucket against the simulated no-skill range.' };
   };
 }
 

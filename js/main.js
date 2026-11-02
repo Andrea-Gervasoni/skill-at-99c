@@ -5,6 +5,9 @@ import { B } from './sim.js';
 import { initSections } from './sections.js';
 import { createMenu } from './menu.js';
 import { createHero } from './hero.js';
+import { initBasics } from './basics.js';
+import { initSay } from './say.js';
+import { createDecor } from './decor.js';
 import { lang, t, tr, translatePage, setLang } from './i18n.js';
 translatePage();
 { const tg = document.querySelector('[data-lang-toggle]'); tg.textContent = lang === 'it' ? 'EN' : 'IT'; tg.addEventListener('click', () => setLang(lang === 'it' ? 'en' : 'it')); }
@@ -328,6 +331,9 @@ setTimeout(() => {
   }, 420);
 }, Math.max(0, minShow));
 
+initBasics({ gsap, phone, reduced });
+initSay({ gsap, reduced });
+{ const decor = createDecor({ billTex, phone, reduced }); if (decor) gsap.ticker.add(() => decor.frame(now(), scrollY())); }
 initSections({ gsap, ScrollTrigger, phone, reduced, data, billTex, normalTex }).then(minis => {
   lenis && lenis.resize();
   measureTone();

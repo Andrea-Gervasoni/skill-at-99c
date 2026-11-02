@@ -127,7 +127,7 @@ export function bundles(host, opts, data, read) {
   const bands = data.simulation.zero_edge_band_by_bucket_pct;
   const LAYER = 0.052, GAP = opts.phone ? 2.75 : 3.1;
   const X = i => (i - (N - 1) / 2) * GAP;
-  // zero-edge range: a bracket beside each bundle
+  // no-skill range: a bracket beside each bundle
   const br = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0x141412, transparent: true, opacity: 0 }));
   M.scene.add(br);
   const brPts = [];
@@ -168,7 +168,7 @@ export function bundles(host, opts, data, read) {
     M.render();
     if (hover >= 0) {
       const r = rows[hover], [lo, hi] = bands[hover];
-      read(`${labels[hover]} · n ${fmtInt(r.n)} · skilled ${fmtInt(r.s)} (${r.sp}%) · anti ${fmtInt(r.a)} (${r.ap}%) · zero-edge ${lo}–${hi}%`);
+      read(`${labels[hover]} · n ${fmtInt(r.n)} · skilled ${fmtInt(r.s)} (${r.sp}%) · anti ${fmtInt(r.a)} (${r.ap}%) · no skill ${lo}–${hi}%`);
     } else read(`≥99¢ · ${fmtInt(rows[5].s)} of ${fmtInt(rows[5].n)} skilled · 0 anti`);
   }
   host.addEventListener('pointermove', ev => {

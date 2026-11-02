@@ -1,41 +1,9 @@
-// The sign flip, as an object: a heavy struck coin with +1 on one face and −1 on the other.
+// The sign flip, as an object: a real coin of Trajan. Heads keeps an event's profit (+1), tails flips it (−1).
 // The test gives every event's profit one of these, at random, a thousand times over. Scrolling
 // through the step flips it; between flips it settles on a face and the readout says which.
 import * as THREE from './vendor/three.module.min.js';
 
 const clamp01 = v => Math.min(1, Math.max(0, v));
-
-// a face: a struck rim, a fine ring of text and the sign in the middle, as colour and as relief
-function face(sign, label, mirror = false) {
-  const S = 1024, c = document.createElement('canvas'); c.width = c.height = S;
-  const g = c.getContext('2d'), m = S / 2;
-  g.fillStyle = '#808080'; g.fillRect(0, 0, S, S);
-  // raised rim and a sunk field
-  g.beginPath(); g.arc(m, m, m * 0.98, 0, Math.PI * 2); g.fillStyle = '#d8d8d8'; g.fill();
-  g.beginPath(); g.arc(m, m, m * 0.86, 0, Math.PI * 2); g.fillStyle = '#6a6a6a'; g.fill();
-  g.beginPath(); g.arc(m, m, m * 0.84, 0, Math.PI * 2); g.lineWidth = 3; g.strokeStyle = '#bdbdbd'; g.stroke();
-  // ring of dots and the legend
-  for (let i = 0; i < 120; i++) { const a = (i / 120) * Math.PI * 2; g.beginPath(); g.arc(m + Math.cos(a) * m * 0.79, m + Math.sin(a) * m * 0.79, 3.2, 0, Math.PI * 2); g.fillStyle = '#c8c8c8'; g.fill(); }
-  g.save(); g.translate(m, m); g.fillStyle = '#e6e6e6'; g.font = '500 52px "Geist Mono", monospace'; g.textAlign = 'center'; g.textBaseline = 'middle';
-  const txt = label.split('');
-  const span = 0.95 * Math.PI;
-  txt.forEach((ch, i) => { const a = -Math.PI / 2 - span / 2 + (i + 0.5) * (span / txt.length); g.save(); g.rotate(a + Math.PI / 2); g.fillText(ch, 0, -m * 0.68); g.restore(); });
-  g.restore();
-  // the sign, struck deep
-  g.fillStyle = '#f2f2f2';
-  const w = m * 0.62, t = m * 0.13;
-  g.fillRect(m - w / 2, m - t / 2, w, t);
-  if (sign > 0) g.fillRect(m - t / 2, m - w / 2, t, w);
-  g.font = '400 120px "Geist Mono", monospace'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#e0e0e0';
-  g.fillText('1', m, m + m * 0.5);
-  const tex = new THREE.CanvasTexture(c);
-  tex.anisotropy = 8;
-  // the underside cap is seen from behind: mirror it so its legend reads the right way
-  // the caps' UVs run a quarter turn round from the screen: turn the print back upright
-  tex.center.set(0.5, 0.5); tex.rotation = sign > 0 ? Math.PI / 2 : -Math.PI / 2; // the underside comes up the other way round
-  if (mirror) { tex.wrapS = THREE.RepeatWrapping; tex.repeat.x = -1; }
-  return tex;
-}
 
 export function createCoin({ host, phone, reduced, read }) {
   const canvas = document.createElement('canvas');
@@ -61,14 +29,14 @@ export function createCoin({ host, phone, reduced, read }) {
   const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(-2, 3, 4); scene.add(key);
   const raking = new THREE.DirectionalLight(0xfff4e0, 1.6); raking.position.set(4, 0.5, 2); scene.add(raking); // low light across the face shows the relief
 
-  // the coin: nickel silver, with a reeded edge
-  const plus = face(1, 'PROFIT × +1 · SIGN FLIP'), minus = face(-1, 'PROFIT × −1 · SIGN FLIP');
-  // the relief is in the bump; the field is polished and the raised parts satin, so the sign catches the light
-  const metal = (bump) => new THREE.MeshStandardMaterial({ color: 0xf2ece0, map: bump, metalness: 0.92, roughness: 0.5, roughnessMap: bump, bumpMap: bump, bumpScale: 3.5 });
+  // the coin: the same photographed coin of Trajan as the cards (CNG, CC BY-SA 2.5): heads keeps the sign, tails flips it
+  const loader = new THREE.TextureLoader();
+  const tex = (url, rot, color) => { const t = loader.load(url); if (color) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; t.center.set(0.5, 0.5); t.rotation = rot; return t; };
+  const side = (name, rot) => new THREE.MeshStandardMaterial({ map: tex(`assets/coin-${name}.webp`, rot, true), bumpMap: tex(`assets/coin-${name}-bump.webp`, rot), bumpScale: 2.5, metalness: 0.6, roughness: 0.4 });
   const reeds = (() => { const c = document.createElement('canvas'); c.width = 1024; c.height = 8; const g = c.getContext('2d'); for (let i = 0; i < 1024; i += 8) { g.fillStyle = '#fff'; g.fillRect(i, 0, 4, 8); g.fillStyle = '#000'; g.fillRect(i + 4, 0, 4, 8); } const t = new THREE.CanvasTexture(c); t.wrapS = THREE.RepeatWrapping; return t; })();
-  const edge = new THREE.MeshStandardMaterial({ color: 0xcfc9bb, metalness: 1, roughness: 0.38, bumpMap: reeds, bumpScale: 2 });
+  const edge = new THREE.MeshStandardMaterial({ color: 0xbcbcbc, metalness: 0.9, roughness: 0.4, bumpMap: reeds, bumpScale: 2 });
   const R = 1.25, T = 0.16;
-  const coin = new THREE.Mesh(new THREE.CylinderGeometry(R, R, T, 128, 1), [edge, metal(plus), metal(minus)]);
+  const coin = new THREE.Mesh(new THREE.CylinderGeometry(R, R, T, 128, 1), [edge, side('obverse', Math.PI / 2), side('reverse', -Math.PI / 2)]);
   // the cylinder's caps look along y; stand it up to face the camera
   const spin = new THREE.Group();
   coin.rotation.x = Math.PI / 2;
@@ -79,10 +47,6 @@ export function createCoin({ host, phone, reduced, read }) {
   const shadow = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 0.7), new THREE.MeshBasicMaterial({ map: sh, transparent: true, depthWrite: false }));
   shadow.position.set(0, -1.75, 0); shadow.rotation.x = -Math.PI / 2.4;
   scene.add(shadow);
-  document.fonts.ready.then(() => {
-    const [a, b] = [face(1, 'PROFIT × +1 · SIGN FLIP'), face(-1, 'PROFIT × −1 · SIGN FLIP')];
-    coin.material[1].map = coin.material[1].bumpMap = coin.material[1].roughnessMap = a; coin.material[2].map = coin.material[2].bumpMap = coin.material[2].roughnessMap = b; coin.material[1].needsUpdate = coin.material[2].needsUpdate = true;
-  });
 
   let W = 1, H = 1;
   function resize() { W = host.clientWidth; H = host.clientHeight; renderer.setSize(W, H, false); camera.aspect = W / H; camera.updateProjectionMatrix(); }

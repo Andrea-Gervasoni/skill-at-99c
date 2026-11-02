@@ -9,16 +9,17 @@ const chromium = !!(navigator.userAgentData && navigator.userAgentData.brands.so
 
 export const SECTIONS = [
   { id: 'top', n: '00', label: 'Opening', note: 'Risk 99¢ to make 1¢' },
-  { id: 'signature', n: '01', label: 'Signature', note: '1,000 sign-flipped histories' },
-  { id: 'method', n: '02', label: 'Method', note: 'read, check, data, test' },
-  { id: 'finding', n: '03', label: 'Finding', note: '613 of 702 at ≥ 99¢' },
-  { id: 'why', n: '04', label: 'Mechanism', note: 'why a favourite looks skilled' },
-  { id: 'sensitivity', n: '05', label: 'Price cap', note: 'the cap decides the side' },
-  { id: 'table1', n: '06', label: 'Table 1', note: 'paper against replication' },
-  { id: 'results', n: '07', label: 'Results', note: 'compared four ways' },
-  { id: 'verdict', n: '08', label: 'Verdict', note: 'what the test measures' },
-  { id: 'claims', n: '09', label: 'Claims', note: 'supported, not, limits' },
-  { id: 'next', n: '10', label: 'Next test', note: 'a fair-price null' }
+  { id: 'basics', n: '01', label: 'Start here', note: 'the basics in nine cards' },
+  { id: 'signature', n: '02', label: 'The test, live', note: 'a 99¢ trader against luck' },
+  { id: 'method', n: '03', label: 'Method', note: 'how I built and checked it' },
+  { id: 'finding', n: '04', label: 'Finding', note: 'the price decides the label' },
+  { id: 'why', n: '05', label: 'Why', note: 'the coin never makes the big loss' },
+  { id: 'sensitivity', n: '06', label: 'Price cap', note: 'without expensive shares' },
+  { id: 'table1', n: '07', label: 'Side by side', note: 'the paper against mine' },
+  { id: 'results', n: '08', label: 'Four checks', note: 'trader or price?' },
+  { id: 'verdict', n: '09', label: 'Verdict', note: 'what the test measures' },
+  { id: 'claims', n: '10', label: 'Claims', note: 'what I can and cannot say' },
+  { id: 'next', n: '11', label: 'Next test', note: 'a coin that can lose 99¢' }
 ];
 
 // a displacement map for a rounded rectangle: the rim bends what is behind it, the centre stays still

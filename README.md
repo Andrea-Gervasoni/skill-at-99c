@@ -5,7 +5,7 @@
 An interactive research site for my TKS Build. I rebuilt the sign-randomization skill test from Gómez-Cram, Guo, Jensen and Kung (2026) and ran it on 1,848,270 real Polymarket trades. My results came out reversed from the paper's, and this site shows why.
 
 **Live site:** https://andrea-gervasoni.github.io/skill-at-99c/
-**Article:** [[Medium link]](https://medium.com/@gervandre09/i-rebuilt-a-skill-test-on-1-8-million-polymarket-trades-it-called-a-7-cent-profit-skill-1e2cf6bf2562)
+**Article:** [Medium link]
 **Research code:** [GitHub link]
 
 ![Skill at 99¢](assets/og.png)
@@ -55,7 +55,8 @@ Then open http://localhost:8000.
 - **Paper:** Gómez-Cram, R., Guo, Y., Jensen, T. I., & Kung, H. (2026). *Prediction Market Accuracy: Crowd Wisdom or Informed Minority?* SSRN Working Paper.
 - **Data:** SII-WANGZJ, *Polymarket_data*, Hugging Face.
 - **$1 note:** scan of the obverse, public domain (work of the United States Government), via Wikimedia Commons. It is shown on one side only and at a size different from a real note, for education (31 CFR 411.1). It is not legal tender.
-- **Fonts:** Cormorant Garamond and Geist Mono, SIL Open Font License.
+- **Coin:** a coin of Trajan, photo by Classical Numismatic Group, Inc., [CC BY-SA 2.5](https://creativecommons.org/licenses/by-sa/2.5/), via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Traianus_denarius_105_90020184.jpg). Cropped and turned to greyscale for the 3D coins; the edited textures (`assets/coin-*.webp`) are shared under the same licence.
+- **Fonts:** Newsreader and Geist Mono, SIL Open Font License.
 - **Libraries:** three.js (MIT), Lenis (MIT), GSAP (standard license).
 
 This is a student research project, not investment advice.
