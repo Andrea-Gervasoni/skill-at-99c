@@ -17,21 +17,21 @@ I'm a high-school student in Italy and this is my TKS project. It started simple
 | Paper, Table 1, 2023–2025 | 8.63% | 16.84% |
 | My replication, Nov–Dec 2025 | 26.89% | 11.05% |
 
-The thing I kept coming back to was price. Accounts that paid 99¢ or more were flagged skilled 613 times out of 702 (87.3%), and not one of them was flagged anti-skilled. Under 80¢ the test looks a lot like the paper's: 11.4% skilled, 14.1% anti-skilled.
+Price turned out to be the biggest issue. Accounts that paid 99¢ or more were flagged skilled 613 times out of 702 (87.3%), and not one of them was flagged anti-skilled. Under 80¢ the test looks a lot like the paper's: 11.4% skilled, 14.1% anti-skilled.
 
 So I invented a trader with no edge at all who buys at 99¢ over 20 events. The test flagged them as skilled 82.7% of the time. My guess is that the test flips the sign of each event's profit at random, and twenty wins of 1¢ are almost impossible to beat by shuffling. The loss that would give the game away, a single 99¢ hit, mostly doesn't happen in 20 events.
 
-I'm not saying the paper is wrong. I had less data and a smaller sample, and I ran the test as published. It just seems to break when the payoffs are this lopsided.
+I'm not saying the paper is wrong. I had less data and a smaller sample, and I ran the test as published. But with payoffs this uneven, I don't think the test is working as intended.
 
 ## How I ran it
 
-First I wrote the test as a Python package and tried it on fake traders where I already knew the answer. That caught three bugs, and the package ended up with 87 tests.
+First I wrote the test as a Python package and tried it on fake traders where I already knew the answer. I found three bugs along the way and eventually wrote 87 tests for the package.
 
 The data is the public Polymarket history on Hugging Face (`SII-WANGZJ/Polymarket_data`, commit `73bc1adc`): 1,266,885,846 fills in a 45.8 GB table. With DuckDB I rebuilt every account's trades per event, converted NO trades to YES terms, read outcomes from the final prices (45 ambiguous markets dropped) and removed market makers with the paper's rule.
 
 The full 2023–2025 run crashed my laptop twice for lack of memory, so I cut it down to November–December 2025. That left 82,568 eligible accounts. I drew 5,000 of them in a fixed order (4,850 with at least one buy) and gave each 1,000 sign flips, seed 20261031, mid-p value. Those 5,000 accounts made the 1,848,270 trades I keep mentioning.
 
-## Still open
+## Questions I haven't answered yet
 
 - I only have two months of data. The paper has three years.
 - The standard error is about half a percentage point.
